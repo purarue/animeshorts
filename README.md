@@ -4,7 +4,7 @@
 
 The code to generate the webpages is written in python3, using [yattag](http://www.yattag.org/) to generate static Bootstrap HTML. `./generate` generates a static html site at `./output`
 
-Feel free to make a [PR](https://github.com/seanbreckenridge/animeshorts/pulls) if you wish to contribute in general. Final say on what goes on the list is up to me, but I'm glad to take suggestions.
+Feel free to make a [PR](https://github.com/purarue/animeshorts/pulls) if you wish to contribute in general. Final say on what goes on the list is up to me, but I'm glad to take suggestions.
 
 Served with `nginx` like:
 

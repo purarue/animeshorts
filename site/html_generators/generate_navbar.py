@@ -134,7 +134,7 @@ def navbar(active: str, **kwargs: Any) -> str:
                         "a",
                         (
                             "href",
-                            "https://github.com/seanbreckenridge/animeshorts",
+                            "https://github.com/purarue/animeshorts",
                         ),
                         ("target", "_blank"),
                         ("rel", "norefferer"),
