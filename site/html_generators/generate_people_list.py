@@ -17,9 +17,9 @@ from .generate_list import join_urls
 class Person(BaseModel):
     name: str
     image: str
-    mal: Optional[int]
-    website: Optional[str]
-    youtube: Optional[str]
+    mal: Optional[int] = None
+    website: Optional[str] = None
+    youtube: Optional[str] = None
 
 
 def image_path(filename: str) -> str:
