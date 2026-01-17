@@ -5,7 +5,8 @@ from itertools import chain
 from hashlib import sha256
 from enum import Enum
 from urllib.parse import urljoin
-from typing import Dict, Sequence, Tuple, Union, List, Optional
+from typing import Union
+from collections.abc import Sequence
 
 import yaml
 from pydantic import BaseModel
@@ -33,25 +34,25 @@ class Tag(Enum):
 
 class Source(BaseModel):
     cc: bool
-    database: Optional[List[Dict[str, Union[List[IdType], IdType]]]]
+    database: list[dict[str, list[IdType] | IdType]] | None
     date: datetime.date
-    duration: Optional[float]
+    duration: float | None
     episodes: int
-    extra_info: Optional[str]
+    extra_info: str | None
     name: str
-    streaming: Optional[List[Dict[str, Union[List[IdType], IdType]]]]
-    tags: List[Tag]
+    streaming: list[dict[str, list[IdType] | IdType]] | None
+    tags: list[Tag]
 
 
 def format_duration(dur: float) -> str:
     """Formats duration (from minutes) into a readable format"""
     if float(dur) >= 1.0:
-        return "{} min".format(int(dur))
+        return f"{int(dur)} min"
     else:
-        return "{} sec".format(int(round(dur * 60)))
+        return f"{int(round(dur * 60))} sec"
 
 
-def join_urls(*parts: Union[Tuple[str, ...], Sequence[str]]) -> str:
+def join_urls(*parts: tuple[str, ...] | Sequence[str]) -> str:
     """joins a variable argument urlpath to a url"""
     parts_url: list[str] = list(map(str, parts))  # convert to strings
     while len(parts_url) > 2:
@@ -80,7 +81,7 @@ def create_id(name: str, octothorpe: bool) -> str:
     )
 
 
-def sort_list(sources: List[Source], list_order: constants.Order) -> List[Source]:
+def sort_list(sources: list[Source], list_order: constants.Order) -> list[Source]:
     if list_order == constants.Order.REC:
         return sources
     else:
@@ -89,7 +90,7 @@ def sort_list(sources: List[Source], list_order: constants.Order) -> List[Source
 
 
 def create_page(
-    sources: List[Source],
+    sources: list[Source],
     list_order: constants.Order,
     mal_cache: Cache,
     download_names: bool,
@@ -351,10 +352,12 @@ def create_page(
                                                     ("target", "_blank"),
                                                     ("rel", "norefferer"),
                                                     href=join_urls(
-                                                        "https://youtu.be"
-                                                        if "playlist"
-                                                        not in str(vid["youtube"])
-                                                        else "https://youtube.com",
+                                                        (
+                                                            "https://youtu.be"
+                                                            if "playlist"
+                                                            not in str(vid["youtube"])
+                                                            else "https://youtube.com"
+                                                        ),
                                                         str(vid["youtube"]),
                                                     ),
                                                 ):
@@ -754,7 +757,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return str(indent(doc.getvalue(), indent_text=True))
 
 
-def fetch_anilist_sources(sources: List[Source]) -> List[Source]:
+def fetch_anilist_sources(sources: list[Source]) -> list[Source]:
     ani = AniListNames()
     for src in sources:
         if src.database:
@@ -779,7 +782,7 @@ def main(do_download_names: bool = True) -> None:
     # Read in YAML Sources
     with open(constants.LIST_SOURCES) as yaml_src:
         sources_raw = yaml.load(yaml_src, Loader=yaml.FullLoader)
-    sources: List[Source] = [Source.parse_obj(s) for s in sources_raw]
+    sources: list[Source] = [Source.parse_obj(s) for s in sources_raw]
     sources = fetch_anilist_sources(sources)
     mal_cache = Cache()  # fetch MAL names
     # write out html file - ordered by recommendation

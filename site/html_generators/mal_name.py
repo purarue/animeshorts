@@ -2,7 +2,8 @@ import json
 import time
 from os import path
 from pathlib import Path
-from typing import Dict, Iterator, Optional, Any
+from typing import Any
+from collections.abc import Iterator
 
 import requests
 import jikanpy
@@ -31,7 +32,7 @@ class Crawl:
         while not self.since_scrape():
             time.sleep(1)
 
-    def get_anime(self, mal_id: int) -> Dict[str, Any]:
+    def get_anime(self, mal_id: int) -> dict[str, Any]:
         count = 0
         while count < self.retry_max:
             # sleep for successively longer times
@@ -50,15 +51,15 @@ class Crawl:
 class Cache:
     """class to manage caching API requests for MAL names"""
 
-    def __init__(self, crawler: Optional[Crawl] = None):
+    def __init__(self, crawler: Crawl | None = None):
         self.jsonpath = Path(constants.this_dir).parent / "mal_name_cache.json"
         self.write_to_cache_const = 5
         self.write_to_cache_periodically = self.write_to_cache_const
         self.crawler = crawler or Crawl()
-        self.items: Dict[str, str] = {}
+        self.items: dict[str, str] = {}
         if not path.exists(self.jsonpath):
             open(self.jsonpath, "a").close()
-        with open(self.jsonpath, "r") as js_f:
+        with open(self.jsonpath) as js_f:
             try:
                 self.items = json.load(js_f)
             except json.JSONDecodeError:  # file is empty or broken

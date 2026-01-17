@@ -1,7 +1,8 @@
 import sys
 from os import path
 from pathlib import Path
-from typing import TypeVar, List, Iterator, Optional
+from typing import TypeVar
+from collections.abc import Iterator
 
 
 import yaml
@@ -17,9 +18,9 @@ from .generate_list import join_urls
 class Person(BaseModel):
     name: str
     image: str
-    mal: Optional[int] = None
-    website: Optional[str] = None
-    youtube: Optional[str] = None
+    mal: int | None = None
+    website: str | None = None
+    youtube: str | None = None
 
 
 def image_path(filename: str) -> str:
@@ -32,19 +33,19 @@ def get_ratio_image_from_relative_path(filename: str) -> str:
     assert p.exists(), str(p)
     with Image.open(p) as img:
         width, height = img.size
-        return "{}%".format(height / width * 100)
+        return f"{height / width * 100}%"
 
 
 T = TypeVar("T")
 
 
-def chunk_list(lst: List[T], chunk_size: int) -> Iterator[List[T]]:
+def chunk_list(lst: list[T], chunk_size: int) -> Iterator[list[T]]:
     """Return chunk_size'd lists from the large list."""
     for i in range(0, len(lst), chunk_size):
         yield lst[i : i + chunk_size]
 
 
-def create_people_page(sources: List[Person]) -> str:
+def create_people_page(sources: list[Person]) -> str:
     doc, tag, text = Doc().tagtext()
     doc.asis("<!DOCTYPE html>")
     with tag("html", ("lang", "en")):

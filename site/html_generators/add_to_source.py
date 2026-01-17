@@ -3,7 +3,7 @@ import pprint
 import yaml
 import click
 import io
-from typing import List, Any
+from typing import Any
 from datetime import date
 from .constants import LIST_SOURCES
 from .generate_list import Source
@@ -75,7 +75,7 @@ def prompt_source() -> Source:
 
 def add_source_to_file() -> None:
     with open(LIST_SOURCES) as yaml_src:
-        sources_raw: List[Any] = yaml.load(yaml_src, Loader=yaml.FullLoader)
+        sources_raw: list[Any] = yaml.load(yaml_src, Loader=yaml.FullLoader)
 
     obj = prompt_source()
     click.echo(f"Source item count: {len(sources_raw)}")
